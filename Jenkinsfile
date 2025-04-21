@@ -2,37 +2,53 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'kanasani1/suma2'
+        IMAGE_NAME = "kanasani1/webdite"
+        IMAGE_TAG = "latest"
+        DOCKER_CREDENTIALS_ID = "dockerhub-creds"  // replace with your Jenkins credentials ID
     }
 
-
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git url: 'https://github.com/anjudoll/webdite.git'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
-                dir('src') {
-                    sh 'docker build -t $IMAGE_NAME:latest .'
+                script {
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}", ".")
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push $IMAGE_NAME:latest
-                    '''
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
                 }
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Local Kubernetes') {
             steps {
-              
-                sh 'kubectl apply -f manifest/deployment.yaml'
-                sh 'kubectl apply -f manifest/service.yaml'
+                script {
+                    sh "kubectl apply -f manifest/deployment.yaml"
+                    sh "kubectl apply -f manifest/service.yaml"
+                }
             }
         }
     }
-}
 
+    post {
+        success {
+            echo '🚀 Deployment to local Kubernetes succeeded!'
+        }
+        failure {
+            echo '❌ Deployment failed.'
+        }
+    }
+}
