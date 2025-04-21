@@ -1,6 +1,6 @@
 pipeline {
+    agent none
     
-
     environment {
         IMAGE_NAME = "kanasani1/webdite"
         IMAGE_TAG = "1.2.3"
