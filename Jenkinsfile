@@ -5,14 +5,7 @@ pipeline {
         IMAGE_NAME = 'kanasani1/suma2'
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-               
-                git 'https://github.com/anjudoll/webdite.git'
-            }
-            
-        }
+
 
         stage('Build Docker Image') {
             steps {
