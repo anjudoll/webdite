@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout') {
             steps {
                
-                git 'https://github.com/anjudoll/jenkins.git'
+                git 'https://github.com/anjudoll/webdite.git'
             }
             
         }
