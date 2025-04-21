@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git url: 'https://github.com/anjudoll/webdite.git'
+                git branch: 'main', url: 'https://github.com/anjudoll/webdite.git'
             }
         }
 
