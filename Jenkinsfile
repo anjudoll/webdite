@@ -14,12 +14,6 @@ pipeline {
             }
         }
 
-        stage('Debug Docker Access') {
-            steps {
-                sh 'echo "PATH=$PATH" && which docker && docker version'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
