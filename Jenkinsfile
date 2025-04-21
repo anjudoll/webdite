@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     
     environment {
         IMAGE_NAME = "kanasani1/webdite"
@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                sh "docker version"
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
